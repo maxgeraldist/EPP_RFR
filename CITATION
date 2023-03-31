@@ -1,0 +1,6 @@
+@Unpublished{rfr_final2023,
+    Title  = {Using RFR to predict if a person's car will crash},
+    Author = {Maxim Efimov},
+    Year   = {2023},
+    Url    = {https://github.com/maxgeraldist/rfr_final}
+}
