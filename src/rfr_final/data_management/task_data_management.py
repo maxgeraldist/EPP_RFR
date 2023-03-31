@@ -2,23 +2,24 @@
 
 import pandas as pd
 import pytask
+import os
+import sys
+current_file_dir = os.path.abspath(os.path.dirname(__file__))
+src_dir = os.path.join(current_file_dir)
+sys.path.append(src_dir)
+from clean_data import task_process_data
 
-from rfr_final.config import BLD, SRC
-from rfr_final.data_management import clean_data
-from rfr_final.utilities import read_yaml
 
 
-@pytask.mark.depends_on(
-    {
-        "scripts": ["clean_data.py"],
-        "data_info": SRC / "data_management" / "data_info.yaml",
-        "data": SRC / "data" / "data.csv",
-    },
-)
-@pytask.mark.produces(BLD / "python" / "data" / "data_clean.csv")
-def task_clean_data_python(depends_on, produces):
-    """Clean the data (Python version)."""
-    data_info = read_yaml(depends_on["data_info"])
-    data = pd.read_csv(depends_on["data"])
-    data = clean_data(data, data_info)
-    data.to_csv(produces, index=False)
+@pytask.mark.depends_on(os.path.join(src_dir, "..", "data", "weekly_prepared_26_11_2017.xlsx"))
+@pytask.mark.produces("data_clean.xlsx")
+def task_clean_data(depends_on, produces):
+    # Load raw data from CSV file
+    df = pd.read_xlsx(depends_on, sheet_name="JTI_weekly_prepared_26_11_2017")
+
+    # Process data using task_process_data function
+    df = task_process_data(df)
+
+    # Save processed data to Excel file
+    df.to_excel(produces)
+    
