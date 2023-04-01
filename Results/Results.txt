@@ -1,0 +1,36 @@
+Feature Importances:
+1. feature acc3_100 (0.084590)
+2. feature weekid (0.079120)
+3. feature side3_100 (0.076033)
+4. feature side1_100 (0.074081)
+5. feature side2_100 (0.072416)
+6. feature speed3_100 (0.071023)
+7. feature week (0.067146)
+8. feature drg3_100 (0.064216)
+9. feature drg1_100 (0.059228)
+10. feature id (0.057669)
+11. feature cor_avg_daily_night_mileage (0.051462)
+12. feature avg_speed (0.047499)
+13. feature acc1_100 (0.047437)
+14. feature cor_avg_daily_morning_jam_mileage (0.040733)
+15. feature avg_daily_business_mileage (0.034627)
+16. feature acc2_100 (0.027724)
+17. feature drg2_100 (0.020979)
+18. feature year (0.017187)
+19. feature mileage (0.006831)
+Model before BE
+OOB score: 0.99442040537463
+Test score: 0.9934719902838925
+MSE: 0.0064642646135743545
+Average predicted value for crashers: 0.010188318357570487
+Average predicted value for non-crashers: 0.005508335553807072
+Feature Importances:
+1. feature weekid (0.495411)
+2. feature year (0.382045)
+3. feature week (0.122543)
+Model after BE
+OOB score: 0.9943444925225841
+Test score: 0.9933201761044481
+MSE: 0.006527172131842826
+Average predicted value for crashers: 0.010260014326459762
+Average predicted value for non-crashers: 0.005280038832146842

@@ -1,7 +1,6 @@
 """Function(s) for cleaning the data set(s)."""
 
 import pandas as pd
-import pytask
 
 
 def task_process_data(df):

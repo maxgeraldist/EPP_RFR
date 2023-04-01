@@ -33,7 +33,7 @@ def predict_and_calculate_mse(rf,X_test,Y_test):
     return mse, Y_pred
 def backward_elimination(X,Y):
     import numpy as np
-    import statsmodels as sm
+    import statsmodels.api as sm
     numVars = len(X[0])
     for i in range(0,(numVars-1)):
         regressor_OLS = sm.OLS(Y,X).fit()

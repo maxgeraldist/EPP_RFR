@@ -13,21 +13,25 @@ current_file_dir = Path(__file__).resolve().parent
 
 # Construct the absolute path of the src directory
 src_dir = current_file_dir.parent.parent
-print (src_dir)
 # Add the src directory to the Python path
 sys.path.append(str(src_dir))
 
 # Import functions from model.py
-from rfr_final.analysis.model import split_data, create_random_forest_regressor, fit_regressor, evaluate_model, predict_and_calculate_mse
+from rfr_final.analysis.model import split_data, create_random_forest_regressor, fit_regressor, backward_elimination
+from rfr_final.final.plot import plot_feature_importances, plot_predicted_vs_actual
 
-@pytask.mark.depends_on(os.path.join(src_dir, "..", "data_management", "data_clean.xlsx"))
-@pytask.mark.produces(["feature_importances.jpg", "predicted_vs_actual.jpg"])
+@pytask.mark.depends_on(os.path.join(src_dir, "rfr_final", "data", "data_clean.xlsx"))
+@pytask.mark.produces([os.path.join(src_dir.parent, "Results", "feature_importances.jpg"),
+                       os.path.join(src_dir.parent, "Results", "predicted_vs_actual.jpg")])
 def task_create_plots(depends_on, produces):
     # Load data from CSV file
-    data = pd.read_excel(depends_on, sheet_name="JTI_weekly_prepared_26_11_2017")
-    X = data.drop('target', axis=1)
-    Y = data['target']
-
+    df = pd.read_excel(depends_on, sheet_name="Sheet1")
+    X= df[['mileage','speed3_100','acc1_100','acc2_100','acc3_100','drg1_100','drg2_100','drg3_100','side1_100','side2_100','side3_100','avg_daily_business_mileage','cor_avg_daily_morning_jam_mileage','cor_avg_daily_night_mileage','avg_speed','max_evening_jam_speed','max_morning_jam_speed','max_night_speed','max_speed']]
+    Y= df['crash']
+    num_cols = len(X.columns)
+    column_titles = X.columns
+    X = X.values.reshape(-1, num_cols)
+    X = backward_elimination(X,Y)
     # Split the data into training and test sets
     X_train, X_test, Y_train, Y_test = split_data(X, Y)
 
@@ -40,23 +44,11 @@ def task_create_plots(depends_on, produces):
     # Get feature importances
     importances = rf.feature_importances_
     indices = np.argsort(importances)[::-1]
-    column_titles = X.columns
-
     # Plot the feature importances of the forest
-    plt.figure()
-    plt.title("Feature importances")
-    plt.bar(range(X.shape[1]), importances[indices],
-            color="r", align="center")
-    plt.xticks(range(X.shape[1]), column_titles[indices])
-    plt.xlim([-1, X.shape[1]])
-    plt.savefig(produces[0])
+    plot_feature_importances(X, importances, indices, column_titles, produces[0])
 
     # Predict on the test set
-    Y_pred = rf.predict(X_test)
+    Y_pred = rf.predict(X_test,)
 
     # Plot the predicted values against the actual values
-    plt.figure()
-    plt.scatter(Y_test, Y_pred)
-    plt.xlabel("Actual values")
-    plt.ylabel("Predicted values")
-    plt.savefig(produces[1])
+    plot_predicted_vs_actual(Y_test, Y_pred, produces[1])
